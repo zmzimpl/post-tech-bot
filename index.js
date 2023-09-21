@@ -253,17 +253,15 @@ const main = async (wallet) => {
         const userInfo = await getUserInfo(username);
         twitterInfo.followers = userInfo.followers_count;
         twitterInfo.posts = userInfo.statuses_count;
-        const transaction = await publicClient.getTransaction({
-          hash: action.txHash,
-        });
-        const { args } = decodeFunctionData({
-          abi: abi,
-          data: transaction.input,
-        });
-        shareInfo.subject = args[0].toString();
-        // if (shouldFetchPrice(twitterInfo, shareInfo)) {
-        // }
       }
+      const transaction = await publicClient.getTransaction({
+        hash: action.txHash,
+      });
+      const { args } = decodeFunctionData({
+        abi: abi,
+        data: transaction.input,
+      });
+      shareInfo.subject = args[0].toString();
       console.log(
         chalk.cyan(
           JSON.stringify({
@@ -284,7 +282,17 @@ const main = async (wallet) => {
         const lastEthPrice = parseFloat(formatEther(lastPrice));
         shareInfo.price = lastEthPrice;
 
-        if (shouldBuy(twitterInfo, shareInfo)) {
+        if (
+          couldBeBought(
+            {
+              subject: shareInfo.subject,
+              trader: transaction.from,
+              isBuy: action.action === "buy",
+            },
+            bots
+          ) &&
+          shouldBuy(twitterInfo, shareInfo)
+        ) {
           logWork({
             walletAddress: wallet.address,
             actionName: "buy",
