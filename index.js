@@ -205,7 +205,7 @@ const main = async (wallet) => {
         recentActions = sliceData;
       } else {
         const previousTopActionIndex = sliceData.findIndex(
-          (f) => f.tx_hash === lastAction.tx_hash
+          (f) => f.txHash === lastAction.txHash
         );
         if (previousTopActionIndex > -1) {
           recentActions = sliceData.slice(0, previousTopActionIndex);
@@ -236,6 +236,9 @@ const main = async (wallet) => {
     for (let index = 0; index < recentActions.length; index++) {
       const start = Date.now();
       const action = recentActions[index];
+      if (!action.txHash) {
+        return;
+      }
       const username = action.subject.user_name;
       const price = action.value;
       const whitelistedUser = isWhitelisted({
@@ -251,7 +254,7 @@ const main = async (wallet) => {
         twitterInfo.followers = userInfo.followers_count;
         twitterInfo.posts = userInfo.statuses_count;
         const transaction = await publicClient.getTransaction({
-          hash: action.tx_hash,
+          hash: action.txHash,
         });
         const { args } = decodeFunctionData({
           abi: abi,
