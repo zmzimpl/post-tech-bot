@@ -1,5 +1,8 @@
 import { STRATEGY_OPERATORS, STRATEGY_TYPES } from "../constants";
 import chalk from "chalk";
+import { readFileSync, promises, existsSync, writeFileSync } from "fs";
+import { getDir } from "../utils/getDir.js";
+
 
 /**
  * 购买策略
@@ -41,6 +44,7 @@ const BuyStrategy = {
   ],
   // 如果一个 key 是由 bots 列表内的地址出售的，不考虑买入
   skipSoldByBot: true,
+  disabledMultiBuy: true,
 };
 /** 不自动购买的地址, 可以把一些假号或者买过了知道会亏的放这里面 */
 const notBuyList = [];
@@ -64,7 +68,17 @@ export const couldBeBought = ({ subject, trader, isBuy }, bots) => {
     }
     return isBlock || isSoldByBot;
   });
-  return !isInBlockList;
+  
+  let holdings = [];
+  if (existsSync(getDir("holdings.json"))) {
+    const rawData = readFileSync(getDir("holdings.json"), "utf-8");
+    holdings = JSON.parse(rawData);
+  }
+  const alreadyBuy =
+    BuyStrategy.disabledMultiBuy && holdings.find((f) => f.share === subject);
+
+  console.log('alreadyBuy', alreadyBuy);
+  return !isInBlockList && !alreadyBuy;
 };
 
 const evaluateCondition = (condition, twitterInfo, shareInfo) => {

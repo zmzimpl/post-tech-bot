@@ -181,7 +181,7 @@ const main = async (wallet) => {
     try {
       const res = await axios({
         method: "get",
-        url: "https://post.tech/api/recent-action",
+        url: "https://api.post.tech/wallet-post/wallet/get-recent-action",
         headers: {
           accept: "application/json",
           "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
@@ -199,6 +199,7 @@ const main = async (wallet) => {
         timeout: 3000,
       });
       const { data } = res.data;
+      console.log(data[0]);
       const sliceData = data.slice(0, 10);
       if (!lastAction) {
         lastAction = sliceData[0];
@@ -239,10 +240,10 @@ const main = async (wallet) => {
       if (!action.txHash) {
         return;
       }
-      const username = action.subject.user_name;
+      const username = action.subject.user_name || action.subject.userName;
       const price = action.value;
       const whitelistedUser = isWhitelisted({
-        username: action.subject.user_name,
+        username: username,
       });
       const twitterInfo = {};
       const shareInfo = {};

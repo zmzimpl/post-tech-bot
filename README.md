@@ -3,7 +3,7 @@
 在 `wallet.example.json` 中填入需要的信息，`authorization` 获取见下图
 ![](https://i.ibb.co/MG6b8R6/20230921190549.png)
 
-`twitterToken` 推特私信 [zmzimpl](https://twitter.com/zmzimpl) 获取
+`twitterToken` 推特私信 [zmzimpl](https://twitter.com/zmzimpl) 获取, 不用 twitterToken 也能跑，就是慢一些和吃内存
 
 在填好了 `wallet.example.json` 需要的信息之后，将 `wallet.example.json` 改名 `wallet.json`
 将 `holdings1.json` 改名 `holdings.json`
