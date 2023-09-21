@@ -199,7 +199,6 @@ const main = async (wallet) => {
         timeout: 3000,
       });
       const { data } = res.data;
-      console.log(data[0]);
       const sliceData = data.slice(0, 10);
       if (!lastAction) {
         lastAction = sliceData[0];
