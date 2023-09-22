@@ -332,6 +332,7 @@ const main = async (wallet) => {
 
   const sellShare = async (subjectAddress, own = 1) => {
     try {
+      await refreshNonce();
       const data = encodeFunctionData({
         abi: abi,
         functionName: "sellShares",
@@ -361,6 +362,7 @@ const main = async (wallet) => {
         return false;
       }
     } catch (error) {
+      console.log(error);
       return false;
     }
   };
