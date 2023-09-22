@@ -473,7 +473,7 @@ const main = async (wallet) => {
     clearBuyInternal();
     clearSellInterval();
     await refreshNonce();
-    // await checkIfSell();
+    await checkIfSell();
 
     await getRecentActions();
     await checkIfBuy();
