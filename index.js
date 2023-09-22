@@ -50,14 +50,6 @@ const contract = getContract({
   // @ts-ignore
   publicClient: publicClient,
 });
-// const websocketClient = createPublicClient({
-//   chain: arbitrum,
-//   transport: webSocket(
-//     "wss://arbitrum-one.blastapi.io/25c22b73-6ec2-40fc-85fe-962b4462b0c5"
-//   ),
-// });
-const ARB_SCAN_API = "KQC5N4I1G3GYGTZUI1NISV4KIP12P5MCYF";
-
 let recentActions = [];
 
 let lastAction;
@@ -373,38 +365,45 @@ const main = async (wallet) => {
   };
 
   const trySell = async (shareObj, calculator) => {
-    const price = await getSellPrice(shareObj.share, shareObj.balance);
-    console.log(JSON.stringify(shareObj));
-    const ethPrice = parseFloat(formatEther(price).substring(0, 8)) * 0.9;
-    const costEthPrice = shareObj.price;
-    const profit =
-      parseFloat(((ethPrice - costEthPrice) * ETH_USCT_Rate).toFixed(2)) - 0.8;
-    // 0.8 is gas fee, about 0.8 USD
-    console.log(
-      chalk[profit > 0 ? "green" : "yellow"](`profit: ${profit} USDT`)
-    );
-    const own = await checkIfOwn(shareObj.share);
-    calculator.sum += profit;
-    calculator.total += ethPrice;
-    if (profit > 0) {
-      calculator.positive += profit;
-    } else {
-      calculator.negative += profit;
-    }
-    if (!own) {
-      return false;
-    }
-    if (
-      ethPrice > 0 &&
-      couldBeSold(wallet.address, shareObj.share) &&
-      shouldSell(shareObj.share, profit)
-    ) {
-      clearBuyInternal();
-      console.log("selling", shareObj.share, "price", ethPrice);
-      const isSold = await sellShare(shareObj.share, own);
-      return isSold;
-    } else {
-      return false;
+    try {
+      const price = await getSellPrice(shareObj.share, shareObj.balance);
+      console.log(JSON.stringify(shareObj));
+      const ethPrice = parseFloat(formatEther(price).substring(0, 8)) * 0.9;
+      const costEthPrice = shareObj.price;
+      const profit =
+        parseFloat(((ethPrice - costEthPrice) * ETH_USCT_Rate).toFixed(2)) -
+        0.8;
+      // 0.8 is gas fee, about 0.8 USD
+      console.log(
+        chalk[profit > 0 ? "green" : "yellow"](`profit: ${profit} USDT`)
+      );
+      const own = await checkIfOwn(shareObj.share);
+      calculator.sum += profit;
+      calculator.total += ethPrice;
+      if (profit > 0) {
+        calculator.positive += profit;
+      } else {
+        calculator.negative += profit;
+      }
+      if (!own) {
+        return false;
+      }
+      if (
+        ethPrice > 0 &&
+        couldBeSold(wallet.address, shareObj.share) &&
+        shouldSell(shareObj.share, profit)
+      ) {
+        clearBuyInternal();
+        console.log("selling", shareObj.share, "price", ethPrice);
+        const isSold = await sellShare(shareObj.share, own);
+        return isSold;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(
+        chalk.red(`sell ${shareObj.balance} share failed: ${shareObj.share}`)
+      );
     }
   };
 
@@ -455,13 +454,16 @@ const main = async (wallet) => {
   };
 
   const intervalBuy = () => {
-    buyIntervalId = setInterval(async () => {
-      if (buying) {
-        return;
-      }
-      await getRecentActions();
-      await checkIfBuy();
-    }, process.env.useTwitterAPI ? 5000 : 25000);
+    buyIntervalId = setInterval(
+      async () => {
+        if (buying) {
+          return;
+        }
+        await getRecentActions();
+        await checkIfBuy();
+      },
+      process.env.useTwitterAPI ? 5000 : 25000
+    );
   };
 
   const intervalSell = () => {
