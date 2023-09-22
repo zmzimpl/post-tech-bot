@@ -461,7 +461,7 @@ const main = async (wallet) => {
       }
       await getRecentActions();
       await checkIfBuy();
-    }, 15000);
+    }, process.env.useTwitterAPI ? 5000 : 25000);
   };
 
   const intervalSell = () => {
@@ -473,7 +473,7 @@ const main = async (wallet) => {
     clearBuyInternal();
     clearSellInterval();
     await refreshNonce();
-    await checkIfSell();
+    // await checkIfSell();
 
     await getRecentActions();
     await checkIfBuy();
@@ -501,7 +501,7 @@ consoleStamp(console, {
 // });
 // process.env.pw1 = password1;
 // process.env.pw2 = password2;
-process.env.twitterToken = wallet.twitterToken;
+process.env.useTwitterAPI = wallet.useTwitterAPI;
 main({
   ...wallet,
 });
