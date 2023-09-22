@@ -84,6 +84,7 @@ const main = async (wallet) => {
     amount = 1
   ) => {
     if (buying) return;
+    await refreshNonce();
     buying = true;
     const data = encodeFunctionData({
       abi: abi,
