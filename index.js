@@ -6,7 +6,7 @@ import {
   sleep,
   logWork,
   decrypt,
-} from "./utils";
+} from "./utils/index.js";
 import consoleStamp from "console-stamp";
 import {
   createPublicClient,
@@ -24,7 +24,7 @@ import axios from "axios";
 import chalk from "chalk";
 import pkg from "lodash";
 import readlineSync from "readline-sync";
-import { couldBeSold, getMaxPrice } from "./strategy";
+import { couldBeSold, getMaxPrice } from "./strategy/index.js";
 import {
   BOT_JUDGED_NONCE,
   couldBeBought,
@@ -32,8 +32,8 @@ import {
   shouldBuy,
   shouldFetchPrice,
   shouldFetchTwitterInfo,
-} from "./strategy/buy";
-import { shouldSell } from "./strategy/sell";
+} from "./strategy/buy.js";
+import { shouldSell } from "./strategy/index.js";
 
 const { throttle } = pkg;
 const wallet = JSON.parse(readFileSync(getDir("wallet.json"), "utf8"));
@@ -372,7 +372,7 @@ const main = async (wallet) => {
     }
   };
 
-  const trySell = async (shareObj) => {
+  const trySell = async (shareObj, calculator) => {
     const price = await getSellPrice(shareObj.share, shareObj.balance);
     console.log(JSON.stringify(shareObj));
     const ethPrice = parseFloat(formatEther(price).substring(0, 8)) * 0.9;
@@ -384,6 +384,13 @@ const main = async (wallet) => {
       chalk[profit > 0 ? "green" : "yellow"](`profit: ${profit} USDT`)
     );
     const own = await checkIfOwn(shareObj.share);
+    calculator.sum += profit;
+    calculator.total += ethPrice;
+    if (profit > 0) {
+      calculator.positive += profit;
+    } else {
+      calculator.negative += profit;
+    }
     if (!own) {
       return false;
     }
@@ -408,12 +415,13 @@ const main = async (wallet) => {
       const rawData = readFileSync(getDir("holdings.json"), "utf-8");
       holdings = JSON.parse(rawData);
     }
+    let calculator = { sum: 0, positive: 0, negative: 0, total: 0 };
     for (let index = 0; index < holdings.length; index++) {
       selling = true;
       const shareObj = holdings[index];
       //   const sellPrice = await getSellPrice(shareObj.share, shareObj.balance);
 
-      const isSold = await trySell(shareObj);
+      const isSold = await trySell(shareObj, calculator);
       if (isSold) {
         holdings = holdings.filter((item) => item.share !== shareObj.share);
         index = index - 1;
@@ -424,6 +432,7 @@ const main = async (wallet) => {
         );
       }
     }
+    console.log(chalk.cyan(JSON.stringify(calculator)));
     if (!buyIntervalId) {
       await getRecentActions();
       await checkIfBuy();
