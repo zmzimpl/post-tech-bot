@@ -461,7 +461,7 @@ const main = async (wallet) => {
       }
       await getRecentActions();
       await checkIfBuy();
-    }, 5000);
+    }, 15000);
   };
 
   const intervalSell = () => {
