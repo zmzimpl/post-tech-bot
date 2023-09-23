@@ -9,8 +9,8 @@ const sellStrategy = {
   conditions: [
     // 利润大于 10 USD 才卖出
     { type: STRATEGY_TYPES.BENEFIT, value: 100 },
-    // 持有时间超过多少小时后不管盈亏直接卖出
-    { type: STRATEGY_TYPES.HOLDING_DURATION, value: 240 },
+    // 持有时间超过多少小时后不管盈亏直接卖出(暂不支持)
+    // { type: STRATEGY_TYPES.HOLDING_DURATION, value: 240 },
   ],
   specifies: [
     {

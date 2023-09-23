@@ -4,7 +4,8 @@
 ![](https://i.ibb.co/MG6b8R6/20230921190549.png)
 
 推特信息获取服务已开源，国内用户推荐在海外服务器上跑
-`useTwitterAPI` 默认使用开启，在编辑器下运行需要你全局代理（如果你的电脑需要VPN才能访问推特的话），可以使用 Clash 的 TUN 模式，海外用户不需要代理，设置为 `false` 也能跑，使用的是本地 puppeteer 环境，会很慢并且卡，慎用
+`useTwitterAPI` 默认使用开启，在编辑器下运行需要你全局代理（如果你的电脑需要VPN才能访问推特的话），可以使用 Clash 的 TUN 模式，海外用户不需要代理。
+`useTwitterAPI` 设置为 `false` 也能跑，使用的是本地 puppeteer 环境，会很慢并且卡，慎用
 
 在填好了 `wallet.example.json` 需要的信息之后，将 `wallet.example.json` 改名 `wallet.json`
 将 `holdings1.json` 改名 `holdings.json`
