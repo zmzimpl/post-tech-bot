@@ -7,7 +7,7 @@ import { getDir } from "../utils/getDir.js";
  * 购买策略
  * 涉及价格，金额的单位统一为 ETH
  */
-const BuyStrategy = {
+export const BuyStrategy = {
   operator: STRATEGY_OPERATORS.OR,
   conditions: [
     {
@@ -41,8 +41,10 @@ const BuyStrategy = {
       ],
     },
   ],
+  onlyBuyBlueVerified: true,
   // 如果一个 key 是由 bots 列表内的地址出售的，不考虑买入
   skipSoldByBot: true,
+  // 禁止多次买入同一个 share
   disabledMultiBuy: true,
 };
 /** 不自动购买的地址, 可以把一些假号或者买过了知道会亏的放这里面 */

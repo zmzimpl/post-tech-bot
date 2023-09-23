@@ -35,8 +35,13 @@ export async function callTwitterApi(username, guest_token) {
     withCredentials: true,
     timeout: 5000,
   });
+  const isBlueVerified = getPropByStringPath(
+    res.data,
+    "data.user.result.is_blue_verified"
+  );
   const userInfo = getPropByStringPath(res.data, "data.user.result.legacy");
   if (userInfo) {
+    userInfo.isBlueVerified = isBlueVerified;
     return userInfo;
   } else {
     return {};

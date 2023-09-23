@@ -27,6 +27,7 @@ import readlineSync from "readline-sync";
 import { couldBeSold, getMaxPrice } from "./strategy/index.js";
 import {
   BOT_JUDGED_NONCE,
+  BuyStrategy,
   couldBeBought,
   isWhitelisted,
   shouldBuy,
@@ -244,6 +245,9 @@ const main = async (wallet) => {
 
       if (!whitelistedUser) {
         const userInfo = await getUserInfo(username);
+        if (BuyStrategy.onlyBuyBlueVerified && !userInfo.isBlueVerified) {
+          continue;
+        }
         twitterInfo.followers = userInfo.followers_count;
         twitterInfo.posts = userInfo.statuses_count;
       }
