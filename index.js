@@ -375,8 +375,8 @@ const main = async (wallet) => {
       const costEthPrice = shareObj.price;
       const profit =
         parseFloat(((ethPrice - costEthPrice) * ETH_USCT_Rate).toFixed(2)) -
-        0.8;
-      // 0.8 is gas fee, about 0.8 USD
+        0.12;
+      // 0.12 is gas fee, about 0.12 USD
       console.log(
         chalk[profit > 0 ? "green" : "yellow"](`profit: ${profit} USDT`)
       );
