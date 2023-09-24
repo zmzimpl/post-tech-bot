@@ -32,11 +32,9 @@ import {
   isWhitelisted,
   shouldBuy,
   shouldFetchPrice,
-  shouldFetchTwitterInfo,
 } from "./strategy/buy.js";
 import { shouldSell } from "./strategy/index.js";
 
-const { throttle } = pkg;
 const wallet = JSON.parse(readFileSync(getDir("wallet.json"), "utf8"));
 const bots = JSON.parse(readFileSync(getDir("bots.json"), "utf8"));
 const abi = JSON.parse(readFileSync(getDir("abi.json"), "utf-8"));
@@ -248,6 +246,8 @@ const main = async (wallet) => {
         if (BuyStrategy.onlyBuyBlueVerified && !userInfo.isBlueVerified) {
           continue;
         }
+        twitterInfo.viewAvg = userInfo.viewAvg;
+        twitterInfo.favoriteAvg = userInfo.favoriteAvg;
         twitterInfo.followers = userInfo.followers_count;
         twitterInfo.posts = userInfo.statuses_count;
       }

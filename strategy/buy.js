@@ -19,6 +19,10 @@ export const BuyStrategy = {
         { type: STRATEGY_TYPES.TWITTER_FOLLOWERS, value: 500 },
         // 推特文章数
         { type: STRATEGY_TYPES.TWITTER_POSTS, value: 20 },
+        // 推特平均阅读量(如果关注数设置得比较小，阅读量和 like 量建议设置为 0，因为这类蓝V可能获取不到阅读数)
+        { type: STRATEGY_TYPES.TWITTER_VIEWS, value: 0 },
+        // 推特推特平均 Like 量
+        { type: STRATEGY_TYPES.TWITTER_FAVS, value: 0 },
       ],
     },
     {
@@ -30,6 +34,10 @@ export const BuyStrategy = {
         { type: STRATEGY_TYPES.TWITTER_FOLLOWERS, value: 1000 },
         // 推特文章数
         { type: STRATEGY_TYPES.TWITTER_POSTS, value: 100 },
+        // 推特平均阅读量
+        { type: STRATEGY_TYPES.TWITTER_VIEWS, value: 500 },
+        // 推特推特平均 Like 量
+        { type: STRATEGY_TYPES.TWITTER_FAVS, value: 30 },
       ],
     },
     {
@@ -78,12 +86,16 @@ export const couldBeBought = ({ subject, trader, isBuy }, bots) => {
   const alreadyBuy =
     BuyStrategy.disabledMultiBuy && holdings.find((f) => f.share === subject);
 
-  console.log("isAlreadyBuy", alreadyBuy);
+  console.log("isAlreadyBuy", alreadyBuy ? true : false);
   return !isInBlockList && !alreadyBuy;
 };
 
 const evaluateCondition = (condition, twitterInfo, shareInfo) => {
   switch (condition.type) {
+    case STRATEGY_TYPES.TWITTER_VIEWS:
+      return twitterInfo.viewAvg >= condition.value;
+    case STRATEGY_TYPES.TWITTER_FAVS:
+      return twitterInfo.favoriteAvg >= condition.value;
     case STRATEGY_TYPES.TWITTER_FOLLOWERS:
       return twitterInfo.followers >= condition.value;
     case STRATEGY_TYPES.TWITTER_POSTS:
@@ -182,7 +194,28 @@ const containsTwitterConditions = (strategy) => {
   }
   return false;
 };
+const containsTwitterViewConditions = (strategy) => {
+  if (strategy.conditions) {
+    for (let condition of strategy.conditions) {
+      if (
+        condition.type === STRATEGY_TYPES.TWITTER_VIEWS ||
+        condition.type === STRATEGY_TYPES.TWITTER_FAVS
+      ) {
+        return true;
+      }
+      if (condition.operator && containsTwitterConditions(condition)) {
+        // 如果是 AND 或 OR 条件
+        return true;
+      }
+    }
+  }
+  return false;
+};
 
 export const shouldFetchTwitterInfo = (accountInfo, shareInfo) => {
   return containsTwitterConditions(BuyStrategy);
+};
+
+export const shouldFetchTwitterViewInfo = () => {
+  return containsTwitterViewConditions(BuyStrategy);
 };
