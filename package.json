@@ -41,7 +41,7 @@
     "puppeteer-core": "^21.2.0",
     "readline-sync": "^1.4.10",
     "socks-proxy-agent": "^8.0.2",
-    "viem": "latest",
+    "viem": "1.11.0",
     "ws": "^8.14.1"
   },
   "devDependencies": {
