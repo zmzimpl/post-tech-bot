@@ -2,6 +2,6 @@
     "address": "",
     "pk": "",
     "authorization": "",
-    "twitterToken": ""
+    "useTwitterAPI": true
   }
   
