@@ -104,3 +104,18 @@ const notSellList = [];
 2. 使用 cmd，将路径导航到代码文件夹下，执行 `npm install`
 
 3. 执行 `npm run start`
+
+## FAQ
+
+1. 一直在刷新 Nonce, 是什么问题？
+    因为现在使用的是 friendtech 的 rpc, 如果出现这个问题长时间没改善，建议自己注册一个 rpc 使用，修改代码：
+
+    ```js
+    const publicClient = createPublicClient({
+        chain: base,
+        transport: http("你的 rpc"),
+    });
+    ```
+
+    如果使用了自定义的 rpc 依然一直在刷新 Nonce，可能和你本地 node 环境有关，尝试在刷新 Nonce 的函数中打印错误，如果是 fetch 找不到，则在 /node_modules/viem/_esm/utils/rpc.js 找到 rpc.js 文件，在顶部增加代码
+    `import fetch from 'node-fetch';`
