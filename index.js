@@ -243,7 +243,7 @@ const main = async (wallet) => {
 
       if (!whitelistedUser) {
         const userInfo = await getUserInfo(username);
-        if (BuyStrategy.onlyBuyBlueVerified && !userInfo.isBlueVerified) {
+        if (BuyStrategy.onlyBuyBlueVerified && !userInfo?.isBlueVerified) {
           continue;
         }
         twitterInfo.viewAvg = userInfo.viewAvg;
@@ -261,6 +261,7 @@ const main = async (wallet) => {
       shareInfo.subject = args[0].toString();
       console.log(
         chalk.cyan(
+          "current transaction info (not actual purchase price): ",
           JSON.stringify({
             ...twitterInfo,
             ...shareInfo,
@@ -278,7 +279,7 @@ const main = async (wallet) => {
         );
         const lastEthPrice = parseFloat(formatEther(lastPrice));
         shareInfo.price = lastEthPrice;
-
+        console.log(chalk.cyan("actual purchase price: ", lastEthPrice));
         if (
           couldBeBought(
             {
